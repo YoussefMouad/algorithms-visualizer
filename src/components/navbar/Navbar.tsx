@@ -11,6 +11,10 @@ export default function Navbar() {
       title: "Dijkstra",
       path: "/dijkstra",
     },
+    {
+      title: "A*",
+      path: "/a-star",
+    },
   ];
 
   return (
