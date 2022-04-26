@@ -6,12 +6,10 @@ export default function Navbar() {
     {
       title: "BFS",
       path: "/bfs",
-      active: true,
     },
     {
-      title: "DFS",
-      path: "/dfs",
-      active: false,
+      title: "Dijkstra",
+      path: "/dijkstra",
     },
   ];
 
@@ -24,7 +22,7 @@ export default function Navbar() {
               <img className="block h-8 w-auto" src={logo} alt="Workflow" />
             </div>
             <div className="ml-6">
-              <div className="flex space-x-4">
+              <div className="flex space-x-2">
                 {items.map((item) => (
                   <NavbarItem {...item} key={item.path} />
                 ))}

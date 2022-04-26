@@ -2,6 +2,16 @@ import React, { Component } from "react";
 import { GridButton } from "../../components/buttons";
 import { TNode } from "../../models";
 
+declare type point = [number, number];
+interface IProps {
+  startHandler: (
+    grid: TNode[][],
+    source: point,
+    target: point,
+    setGrid: () => void
+  ) => void;
+}
+
 interface IState {
   grid: TNode[];
 }
@@ -12,15 +22,14 @@ enum ClickType {
   obstacle,
 }
 
-export default class BfsPage extends Component<any, IState> {
+export default class BfsPage extends Component<IProps, IState> {
   private grid: TNode[][];
   private size = 20;
   private source: [number, number] = [3, 3];
   private target: [number, number] = [6, 8];
-  private static sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
   private clickType = ClickType.obstacle;
 
-  public constructor(props: any) {
+  public constructor(props: IProps) {
     super(props);
     this.grid = new Array(this.size);
     this.state = {
@@ -49,11 +58,18 @@ export default class BfsPage extends Component<any, IState> {
     return (
       <>
         <div className="m-8 text-center">
-          <div>
+          <div className="mb-3">
             <button
               type="button"
               className="text-white bg-gray-500 hover:bg-gray-700 rounded-lg p-2.5 dark:border-gray-700 mr-2"
-              onClick={() => this.bfs()}
+              onClick={() =>
+                this.props.startHandler?.(
+                  this.grid,
+                  this.source,
+                  this.target,
+                  this.setGrid
+                )
+              }
             >
               Start
             </button>
@@ -128,58 +144,6 @@ export default class BfsPage extends Component<any, IState> {
     this.setGrid();
   }
 
-  private async bfs() {
-    const queue = [this.source];
-    const path: { [key: string]: [number, number] | null } = {};
-    path[`${this.source[0]}-${this.source[1]}`] = null;
-    let x, y;
-
-    while (queue.length) {
-      await BfsPage.sleep(1);
-
-      [x, y] = queue.shift() as [number, number];
-      if (!this.isInBounds(x, y) || this.grid[x][y].visited) {
-        continue;
-      }
-
-      this.grid[x][y].visited = true;
-      this.setGrid();
-
-      if (this.target[0] === x && this.target[1] === y) {
-        break;
-      }
-
-      const previous: [number, number] = [x, y];
-      if (this.canVisit(x - 1, y)) {
-        queue.push([x - 1, y]);
-        path[`${x - 1}-${y}`] = previous;
-      }
-      if (this.canVisit(x, y + 1)) {
-        queue.push([x, y + 1]);
-        path[`${x}-${y + 1}`] = previous;
-      }
-      if (this.canVisit(x + 1, y)) {
-        queue.push([x + 1, y]);
-        path[`${x + 1}-${y}`] = previous;
-      }
-      if (this.canVisit(x, y - 1)) {
-        queue.push([x, y - 1]);
-        path[`${x}-${y - 1}`] = previous;
-      }
-    }
-
-    let previous: [number, number] | null = this.target;
-    while (previous) {
-      previous = path[`${previous[0]}-${previous[1]}`];
-      if (!previous) {
-        break;
-      }
-      this.grid[previous[0]][previous[1]].isPath = true;
-      await BfsPage.sleep(1);
-      this.setGrid();
-    }
-  }
-
   private reset() {
     for (let i = 0; i < this.size; ++i) {
       for (let j = 0; j < this.size; ++j) {
@@ -191,21 +155,9 @@ export default class BfsPage extends Component<any, IState> {
     this.setGrid();
   }
 
-  private isInBounds(x: number, y: number): boolean {
-    return x >= 0 && y >= 0 && x < this.size && y < this.size;
-  }
-
-  private canVisit(x: number, y: number): boolean {
-    return (
-      this.isInBounds(x, y) &&
-      !this.grid[x][y].visited &&
-      !this.grid[x][y].isObstacle
-    );
-  }
-
-  private setGrid(): void {
+  private setGrid = (): void => {
     this.setState({
       grid: this.grid.flat(),
     });
-  }
+  };
 }

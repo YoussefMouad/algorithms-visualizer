@@ -14,7 +14,7 @@ export default function GridButton(props: TNode) {
       }
       onClick={(event) => props.clickHandler?.(event)}
       onContextMenu={(event) => props.clickHandler?.(event)}
-      onMouseEnter={(event) => props.clickHandler?.(event)}
+      // onMouseEnter={(event) => props.clickHandler?.(event)}
     >
       {/* {props.id} */}
     </button>
