@@ -37,21 +37,14 @@ export default class BfsPage extends Component {
       }
 
       const previous: point = [x, y];
-      if (canVisit(grid, x - 1, y)) {
-        queue.push([x - 1, y]);
-        path[`${x - 1}-${y}`] = previous;
-      }
-      if (canVisit(grid, x, y + 1)) {
-        queue.push([x, y + 1]);
-        path[`${x}-${y + 1}`] = previous;
-      }
-      if (canVisit(grid, x + 1, y)) {
-        queue.push([x + 1, y]);
-        path[`${x + 1}-${y}`] = previous;
-      }
-      if (canVisit(grid, x, y - 1)) {
-        queue.push([x, y - 1]);
-        path[`${x}-${y - 1}`] = previous;
+      const difX = [0, 0, 1, -1];
+      const difY = [-1, 1, 0, 0];
+
+      for (let i = 0; i < 4; ++i) {
+        if (canVisit(grid, x + difX[i], y + difY[i])) {
+          queue.push([x + difX[i], y + difY[i]]);
+          path[`${x + difX[i]}-${y + difY[i]}`] = previous;
+        }
       }
     }
 
